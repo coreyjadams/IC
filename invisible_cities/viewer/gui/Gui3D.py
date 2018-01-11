@@ -5,16 +5,16 @@ import pyqtgraph as pg
 
 from . ViewManager3D import ViewManager3D
 
-# 
+#
 
 class ConnectedSpinBox(QtGui.QSpinBox):
     """Wrap the spin box class to allow key signals to pass to the Gui
-    
+
     [description]
-    
+
     Extends:
         QtGui.QSpinBox
-    
+
     Variables:
         quit_requested {pyqtsignal} -- signal to emit when quit has been requested
         and this class has focus
@@ -23,14 +23,14 @@ class ConnectedSpinBox(QtGui.QSpinBox):
     quit_requested = QtCore.pyqtSignal()
     def __init__(self):
         super(ConnectedSpinBox, self).__init__()
-        
+
 
     def keyPressEvent(self, e):
         """Catch ctrl + C calls
-        
+
         Intercept keyPressEvents for ctrl + c.  Other keyPressEvents
         are passed to the default handler for QSpinBox
-        
+
         Arguments:
             e {} -- Key event
         """
@@ -45,17 +45,17 @@ class ConnectedSpinBox(QtGui.QSpinBox):
 
 class Gui3D(QtGui.QWidget):
     """Basic 3D window interface
-    
+
     This class creates a 3D view interface including camera controls, a widget
-    that has OpenGL rendering ability (member variable self._view_manager.view()), 
+    that has OpenGL rendering ability (member variable self._view_manager.view()),
     and basic event interface buttons (next, previous, go_to_event, etc.)
-    
+
     Extends:
         QtGui.QWidget
-    
+
     Variables:
         self._view_manager {[type]} -- [description]
-        
+
     """
 
     def __init__(self, manager):
@@ -73,21 +73,21 @@ class Gui3D(QtGui.QWidget):
             event {[type]} -- [description]
 
         """
-        self.quit()  
+        self.quit()
 
     def quit(self):
         """Close the qapplication
-        
+
         """
         QtCore.QCoreApplication.instance().quit()
 
 
     def update(self):
         """Keeps informational text up to date
-        
+
         Keeps run, event, etc up to date when things change
         Also triggers a fresh draw of items to be rendered
-        
+
         """
 
         # set the text boxes correctly:
@@ -99,24 +99,21 @@ class Gui3D(QtGui.QWidget):
         runLabel = "Run: " + str(self._event_manager.io().run())
         self._runLabel.setText(runLabel)
 
-        subrunLabel = "Subrun: " + str(self._event_manager.io().subrun())
-        self._subrunLabel.setText(subrunLabel)
-        
         self._event_manager.draw_fresh(self._view_manager)
 
 
     def update_camera_info(self, cameraPos=None,worldPos=None):
         """Update camera text when things change
-        
+
         This function is not for changing the view when the text boxes are changed
         It is for keeping the text boxes in sync with the view as the user changes the view.
-        
+
         Keyword Arguments:
             cameraPos {[type]} -- [description] (default: {None})
             worldPos {[type]} -- [description] (default: {None})
 
         """
-        # 
+        #
 
         # UPdate all of the camera text entries:
         if cameraPos is None:
@@ -124,9 +121,9 @@ class Gui3D(QtGui.QWidget):
         if worldPos is None:
             worldPos = self._view_manager.get_view().worldCenter()
 
-        # To actually update these things corrently, we have to unplug 
+        # To actually update these things corrently, we have to unplug
         # the signals from the slots, update the fields, and then plug everything back in
-        
+
 
         try:
             self._cameraCenterX.valueChanged.disconnect()
@@ -171,7 +168,7 @@ class Gui3D(QtGui.QWidget):
     # This function prepares the buttons such as prev, next, etc and returns a layout
     def get_event_control_buttons(self):
         """Prepares the buttons such as prev, next, etc and returns a layout
-        
+
         """
         # This is a box to allow users to enter an event
         self._goToLabel = QtGui.QLabel("Go to: ")
@@ -182,20 +179,19 @@ class Gui3D(QtGui.QWidget):
         # # These labels display current events
         self._runLabel = QtGui.QLabel("Run: 0")
         self._eventLabel = QtGui.QLabel("Ev.: 0")
-        self._subrunLabel = QtGui.QLabel("Subrun: 0")
 
         # Jump to the next event
         self._nextButton = QtGui.QPushButton("Next")
         # self._nextButton.setStyleSheet("background-color: red")
         self._nextButton.clicked.connect(self._event_manager.next)
         self._nextButton.setToolTip("Move to the next event.")
-        
+
         # Go to the previous event
         self._prevButton = QtGui.QPushButton("Previous")
         self._prevButton.clicked.connect(self._event_manager.prev)
         self._prevButton.setToolTip("Move to the previous event.")
 
-        
+
         # pack the buttons into a box
         self._eventControlBox = QtGui.QVBoxLayout()
 
@@ -208,16 +204,15 @@ class Gui3D(QtGui.QWidget):
         self._eventControlBox.addLayout(self._eventGrid)
         self._eventControlBox.addWidget(self._eventLabel)
         self._eventControlBox.addWidget(self._runLabel)
-        self._eventControlBox.addWidget(self._subrunLabel)
         self._eventControlBox.addWidget(self._nextButton)
         self._eventControlBox.addWidget(self._prevButton)
 
         return self._eventControlBox
-  
+
 
     def go_to_event_worker(self):
         """Pass the entry of line edit to the event control
-        
+
         """
         try:
             event = int(self._entryBox.text())
@@ -229,7 +224,7 @@ class Gui3D(QtGui.QWidget):
 
     def get_drawing_control_buttons(self):
         """prepares the range controlling options and returns a layout
-        
+
         """
         # Button to set range to max
         self._autoRangeButton = QtGui.QPushButton("Auto Range")
@@ -251,7 +246,7 @@ class Gui3D(QtGui.QWidget):
         width  = self._event_manager.meta().max_x() - self._event_manager.meta().min_x()
         height = self._event_manager.meta().max_y() - self._event_manager.meta().min_y()
         length = self._event_manager.meta().max_z() - self._event_manager.meta().min_z()
-        
+
 
         # Define the x,y,z location of the camera and world center
         self._cameraCenterLayout = QtGui.QVBoxLayout()
@@ -283,7 +278,7 @@ class Gui3D(QtGui.QWidget):
         self._cameraCenterZLabel = QtGui.QLabel("Z:")
         self._cameraCenterZ = ConnectedSpinBox()
         self._cameraCenterZ.setValue(0)
-        self._cameraCenterZ.setRange(-10*length,10*length)   
+        self._cameraCenterZ.setRange(-10*length,10*length)
         self._cameraCenterZ.quit_requested.connect(self.quit)
         self._cameraCenterZ.valueChanged.connect(self.camera_center_worker)
         self._cameraCenterZLayout.addWidget(self._cameraCenterZLabel)
@@ -320,7 +315,7 @@ class Gui3D(QtGui.QWidget):
         self._worldCenterZLabel = QtGui.QLabel("Z:")
         self._worldCenterZ = ConnectedSpinBox()
         self._worldCenterZ.setValue(0)
-        self._worldCenterZ.setRange(-10*length,10*length)   
+        self._worldCenterZ.setRange(-10*length,10*length)
         self._worldCenterZ.quit_requested.connect(self.quit)
         self._worldCenterZ.valueChanged.connect(self.world_center_worker)
         self._worldCenterZLayout.addWidget(self._worldCenterZLabel)
@@ -360,7 +355,7 @@ class Gui3D(QtGui.QWidget):
 
     def auto_range_worker(self):
         """Worker function to handle clickinng the autorange button
-        
+
         """
         # Get the list of min/max coordinates:
         cmin, cmax = self._event_manager.get_min_max_coords()
@@ -372,7 +367,7 @@ class Gui3D(QtGui.QWidget):
     def restore_defaults_worker(self):
         """Restore the default values for the view"""
         self._view_manager.set_range_to_max()
-    
+
     def get_quit_layout(self):
         """Prepare the layout for the quit button"""
         self._quitButton = QtGui.QPushButton("Quit")
@@ -380,10 +375,10 @@ class Gui3D(QtGui.QWidget):
         self._quitButton.clicked.connect(self.quit)
         return self._quitButton
 
-      # 
+      #
     def get_west_layout(self):
         """This function combines the control button layouts, range layouts, and quit button
-        
+
         """
         event_control = self.get_event_control_buttons()
         draw_control = self.get_drawing_control_buttons()
@@ -391,7 +386,7 @@ class Gui3D(QtGui.QWidget):
 
         # Add the quit button?
         quit_control = self.get_quit_layout()
-        
+
         self._westLayout = QtGui.QVBoxLayout()
         self._westLayout.addLayout(event_control)
         self._westLayout.addStretch(1)
@@ -472,12 +467,12 @@ class Gui3D(QtGui.QWidget):
         self.master.addLayout(self.slave)
         self.master.addWidget(self.southLayout)
 
-        self.setLayout(self.master)    
+        self.setLayout(self.master)
 
         self.update_camera_info()
 
         self.setGeometry(0, 0, 2400, 1600)
-        self.setWindowTitle('Event Display')    
+        self.setWindowTitle('Event Display')
         self.setFocus()
         self.show()
 
@@ -503,15 +498,13 @@ class Gui3D(QtGui.QWidget):
 
     def screenCapture(self):
         """Capture the screen viewed
-        
+
         """
         print("Screen Capture!")
         dialog = QtGui.QFileDialog()
         r = self._event_manager.run()
         e = self._event_manager.event()
-        s = self._event_manager.subrun()
-        name = "larcv_3D_" + "R" + str(r)
-        name = name + "_S" + str(s)
+        name = "ic_viewer_" + "R" + str(r)
         name = name + "_E" + str(e) + ".png"
         f = dialog.getSaveFileName(self,"Save File",name,
             "PNG (*.png);;JPG (*.jpg);;All Files (*)")

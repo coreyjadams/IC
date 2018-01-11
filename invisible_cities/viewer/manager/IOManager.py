@@ -4,7 +4,7 @@ from invisible_cities.io import pmap_io, mchits_io
 
 class IOManager(object):
     """wrapper to IC event interface to allow random access through events
-    
+
     IC doesn't implicitly allow a random access event loop.  This class
     reads an entire file into memory, and then stores the events to allow
     the event viewer to access them randomly.
@@ -20,12 +20,10 @@ class IOManager(object):
         self._max_entry = 0
         # Current run (informational)
         self._run = 0
-        # Current subrun (informational)
-        self._subrun = 0
 
     def event(self):
         """Get the data from the current event
-        
+
         Returns:
             [type] -- [description]
         """
@@ -33,7 +31,7 @@ class IOManager(object):
 
     def entry(self):
         """Get the currently accessed entry
-        
+
         Returns:
             int -- the active entry
         """
@@ -41,28 +39,20 @@ class IOManager(object):
 
     def run(self):
         """Get the run number of the current entry
-        
+
         Returns:
             int -- the current run number
         """
         return self._run
 
-    def subrun(self):
-        """Get the subrun number of the current entry
-        
-        Returns:
-            int -- the current subrun number
-        """
-        return self._subrun
-
     def set_file(self, file_name):
         """Open a new file and read it's data
-        
+
         Read the pmaps from a new file.  Will attempt to read MC as well, though
         it will catch exceptions if any MC is missing.
 
         Does not yet read reconstructed information, this is a TODO
-        
+
         Arguments:
             file_name {str} -- path to file to open
         """
@@ -92,8 +82,7 @@ class IOManager(object):
                 break
             i += 1
         # There must be a way to get run and subrun information...
-        self._subrun = int(strs[i+1])
-        self._run = int(strs[i+2])
+        self._run = 0
 
         self._has_reco = False
         if not (self._has_reco or self._has_pmaps or self._has_mc):
@@ -108,13 +97,13 @@ class IOManager(object):
 
     def s1(self, event=-1):
         """Return s2 information for an event
-        
+
         If event is specified explicitly, check event is available and return that s2
         Otherwise, return s2 for currently active event
-        
+
         Keyword Arguments:
             event {number} -- event number (default: {-1})
-        
+
         Returns:
             S1 -- S1 object of PMap
         """
@@ -128,13 +117,13 @@ class IOManager(object):
 
     def s2(self, event=-1):
         """Return s2 information for an event
-        
+
         If event is specified explicitly, check event is available and return that s2
         Otherwise, return s2 for currently active event
-        
+
         Keyword Arguments:
             event {number} -- event number (default: {-1})
-        
+
         Returns:
             S2 -- S2 object of PMap
         """
@@ -148,13 +137,13 @@ class IOManager(object):
 
     def s2si(self, event=-1):
         """Return s2si information for an event
-        
+
         If event is specified explicitly, check event is available and return that s2si
         Otherwise, return s2si for currently active event
-        
+
         Keyword Arguments:
             event {number} -- event number (default: {-1})
-        
+
         Returns:
             s2si -- s2si object of PMap
         """
@@ -168,13 +157,13 @@ class IOManager(object):
 
     def mchits(self, event=-1):
         """Return mchit objects
-        
+
         If event is specified explicitly, check event is available and return that mchits
         Otherwise, return mchis for currently active event
-                
+
         Keyword Arguments:
             event {number} -- [description] (default: {-1})
-        
+
         Returns:
             mchits -- MCHits object
         """
@@ -188,13 +177,13 @@ class IOManager(object):
 
     def mctracks(self, event=-1):
         """Return mctrack objects
-        
+
         If event is specified explicitly, check event is available and return that mctrack
         Otherwise, return mctrack for currently active event
-                
+
         Keyword Arguments:
             event {number} -- [description] (default: {-1})
-        
+
         Returns:
             mctrack -- mctrack object
         """
@@ -204,11 +193,11 @@ class IOManager(object):
             event = self._events[self._entry]
         if event not in self._events:
             print("Can't go to event {}".format(event))
-        return self._mc_part[event]        
+        return self._mc_part[event]
 
     def get_num_events(self):
         """Query for the total number of events in this file
-        
+
         Returns:
             int -- Total number of events
         """
@@ -216,10 +205,10 @@ class IOManager(object):
 
     def go_to_entry(self,entry):
         """Move the current index to the specified entry
-        
-        Move the access point to the entry specified.  Does checks to 
+
+        Move the access point to the entry specified.  Does checks to
         verify the entry is available.
-        
+
         Arguments:
             entry {int} -- Desired entry
         """
