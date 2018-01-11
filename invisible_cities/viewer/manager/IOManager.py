@@ -86,8 +86,7 @@ class IOManager(object):
 
         self._has_reco = False
         if not (self._has_reco or self._has_pmaps or self._has_mc):
-            print("Couldn't load file {}.".format(file_name))
-            exit(-1)
+            raise("Couldn't load file {}.".format(file_name))
 
         # Use the S2_dict as the list of events.
         # This explicitly requires that events have both s2 and s2si available.
@@ -168,6 +167,7 @@ class IOManager(object):
             mchits -- MCHits object
         """
         if not self._has_mc:
+            print("This file does not have mc information.")
             return None
         if event == -1:
             event = self._events[self._entry]
@@ -188,6 +188,7 @@ class IOManager(object):
             mctrack -- mctrack object
         """
         if not self._has_mc:
+            print("This file does not have mc information.")
             return None
         if event == -1:
             event = self._events[self._entry]

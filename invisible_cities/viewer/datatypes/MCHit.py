@@ -6,7 +6,7 @@ from . DataBase   import RecoBase3D
 class MCHit(RecoBase3D):
 
     """Class for drawing MC Hits
-    
+
     Draws depositions of charge (mchit) as white spheres on the view
     """
 
@@ -24,25 +24,27 @@ class MCHit(RecoBase3D):
     # this is the function that actually draws the cluster.
     def draw_objects(self, view_manager, io, meta):
         """Override draw_objects for mchits
-        
-        Gather the MCHits from the io, and call a worker function to put them 
+
+        Gather the MCHits from the io, and call a worker function to put them
         on the screen.
-        
+
         Arguments:
             view_manager {ViewManager3D} -- The view manager
             io {IOManager} -- Instance of IOManager
             meta {EventMeta} -- Instance of EventMeta
         """
 
+
         # Get the data from the file:
         mc_hits = io.mchits()
 
-
+        if mc_hits is None:
+            return
 
         self._points = numpy.ndarray((len(mc_hits),3))
         self._vals   = numpy.ndarray((len(mc_hits)))
         self._colors = numpy.ndarray((len(mc_hits),4))
-        
+
 
         i = 0
         for hit in mc_hits:
@@ -53,7 +55,7 @@ class MCHit(RecoBase3D):
 
             i += 1
 
-        
+
         self._min_coords = numpy.min(self._points, axis=0)
         self._max_coords = numpy.max(self._points, axis=0)
 
@@ -62,10 +64,10 @@ class MCHit(RecoBase3D):
 
     def redraw(self, view_manager):
         """This function actually puts the objects on the screen
-        
-        Take the numpy arrays from draw_objects, build the color scale fresh, and draw 
+
+        Take the numpy arrays from draw_objects, build the color scale fresh, and draw
         the objects
-        
+
         Arguments:
             view_manager {ViewManager3D} -- The view manager
         """
@@ -82,28 +84,28 @@ class MCHit(RecoBase3D):
             self._colors[i] = this_color
             i += 1
 
-        #make a mesh item: 
+        #make a mesh item:
         mesh = gl.GLScatterPlotItem(pos=self._points,
                                     color=self._colors,
                                     size=1,
                                     pxMode=False)
 
-        # mesh.setGLOptions("opaque")        
+        # mesh.setGLOptions("opaque")
         self._gl_points_collection = mesh
         view_manager.get_view().addItem(self._gl_points_collection)
 
     def get_color(self, lookupTable, levels, value ):
         """Use the lookup table and levels to interpolate a color
-        
-        Finds the value of the lookup table that is closest to the 
+
+        Finds the value of the lookup table that is closest to the
         value specified.  Colors above threshold are set to the max
         value.  Below threhold is set to (0,0,0,0)
-        
+
         Arguments:
             lookupTable {} -- [Color lookup table]
             levels {list} -- Min and max values of the table
-            value {[type]} -- Value in question 
-        
+            value {[type]} -- Value in question
+
         Returns:
             [type] -- [description]
         """
@@ -122,9 +124,9 @@ class MCHit(RecoBase3D):
 
     def clear_drawn_objects(self, view_manager):
         """Override clear drawn objects
-        
+
         Remove objects from view, and delete the local cache of data
-        
+
         Arguments:
             view_manager {ViewManager3D} -- The view manager
         """

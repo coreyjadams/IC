@@ -19,9 +19,9 @@ class MCTrack(RecoBase3D):
     # this is the function that actually draws the cluster.
     def draw_objects(self, view_manager, event, meta):
         """Override draw_objects for mctracks
-        
+
         Gather the MCTracks from the io, and put them on the screen
-        
+
         Arguments:
             view_manager {ViewManager3D} -- The view manager
             io {IOManager} -- Instance of IOManager
@@ -29,6 +29,9 @@ class MCTrack(RecoBase3D):
         """
         # Get the data from the file:
         mc_tracks = event.mctracks()
+
+        if mc_tracks is None:
+            return
 
         running_min = None
         running_max = None
