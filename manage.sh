@@ -80,6 +80,8 @@ dependencies:
 - python=3.6.2=0
 - scipy=0.19.1=np113py36_0
 - sphinx=1.6.3=py36_0
+- pyqt5==5.7.1
+- pyqtgraph=0.10.0
 - pip:
   - flaky==3.4.0
   - hypothesis==3.32.0
