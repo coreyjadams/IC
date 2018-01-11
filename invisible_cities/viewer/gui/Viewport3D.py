@@ -59,7 +59,7 @@ class Viewport3D(gl.GLViewWidget):
 
         # # Draw a cylinder for the detector:
         cylinderPoints = gl.MeshData.cylinder(2, 10, 
-            radius=[1.5*meta.radius(), 1.5*meta.radius()], 
+            radius=[meta.radius(), meta.radius()], 
             length=meta.len_z())
         cylinder = gl.GLMeshItem(meshdata=cylinderPoints,
                                  drawEdges=True,
