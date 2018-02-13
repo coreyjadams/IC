@@ -111,7 +111,7 @@ function run_tests {
     fi
 
     # Run the test suite
-    pytest -v
+    pytest -v --no-success-flaky-report
 }
 
 function run_tests_par {
@@ -122,8 +122,8 @@ function run_tests_par {
 
     # Run the test suite
     EXIT=0
-    pytest -v -n ${N_PROC} -m "not serial" || EXIT=$?
-    pytest -v              -m      serial  || EXIT=$?
+    pytest -v -n ${N_PROC} -m "not serial" --no-success-flaky-report || EXIT=$?
+    pytest -v              -m      serial  --no-success-flaky-report || EXIT=$?
     exit $EXIT
 }
 
