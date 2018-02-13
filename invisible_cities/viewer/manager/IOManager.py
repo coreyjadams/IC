@@ -86,13 +86,16 @@ class IOManager(object):
 
         self._has_reco = False
         if not (self._has_reco or self._has_pmaps or self._has_mc):
-            raise("Couldn't load file {}.".format(file_name))
+            raise Exception("Couldn't load file {}.".format(file_name))
 
         # Use the S2_dict as the list of events.
         # This explicitly requires that events have both s2 and s2si available.
         self._events = list(set(self._s1_dict.keys()).intersection(set(self._s2si_dict.keys())))
         # Store the highest available entry to access
         self._max_entry = len(self._events) -1
+
+    def has_pmaps(self):
+        return self._has_pmaps
 
     def s1(self, event=-1):
         """Return s2 information for an event

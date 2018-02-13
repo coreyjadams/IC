@@ -6,7 +6,7 @@ from pyqtgraph  import opengl as gl
 class PMap(RecoBase3D):
 
     """Class for drawing PMaps
-    
+
     Computes active voxels using S1 and S2si to draw pmaps
     """
 
@@ -32,7 +32,7 @@ class PMap(RecoBase3D):
                                           [ 0 , 1, 1]],
                                          dtype=float)
 
-        # A template of the 12 triangles (in reference to the above 
+        # A template of the 12 triangles (in reference to the above
         # vertexes) needed to draw the faces of a cube
         self._faces_template = numpy.array([[0, 1, 2],
                                             [0, 2, 3],
@@ -50,15 +50,17 @@ class PMap(RecoBase3D):
     # this is the function that actually draws the cluster.
     def draw_objects(self, view_manager, io, meta):
         """Get pmaps from the data and draw on the screen
-        
+
         Fetches S1 and S2 and draws the values on the screen.
-        
+
         Arguments:
             view_manager {ViewManager3D} -- The view manager
             io {IOManager} -- Instance of IOManager
             meta {EventMeta} -- Instance of EventMeta
         """
-
+        if not io.has_pmaps():
+            print("There are no pmaps to draw.")
+            return
 
         # Store a reference to the meta object:
         self._meta = meta
@@ -90,11 +92,11 @@ class PMap(RecoBase3D):
 
             i += 1
 
-        self._min_coords = numpy.asarray((numpy.min(self._x), 
-                                         numpy.min(self._y), 
+        self._min_coords = numpy.asarray((numpy.min(self._x),
+                                         numpy.min(self._y),
                                          numpy.min(self._z)))
-        self._max_coords = numpy.asarray((numpy.max(self._x), 
-                                         numpy.max(self._y), 
+        self._max_coords = numpy.asarray((numpy.max(self._x),
+                                         numpy.max(self._y),
                                          numpy.max(self._z)))
 
         self.redraw(view_manager)
@@ -102,9 +104,9 @@ class PMap(RecoBase3D):
 
     def redraw(self, view_manager):
         """Redraw the objects on the screen
-        
+
         Take the cached data and render it
-        
+
         Arguments:
             view_manager {ViewManager3D} -- view manager
         """
@@ -117,25 +119,25 @@ class PMap(RecoBase3D):
         verts, faces, colors = self.build_triangle_array(view_manager)
 
 
-        #make a mesh item: 
+        #make a mesh item:
         mesh = gl.GLMeshItem(vertexes=verts,
                              faces=faces,
                              faceColors=colors,
                              smooth=False)
 
-        mesh.setGLOptions("translucent")        
+        mesh.setGLOptions("translucent")
         self._gl_voxel_mesh = mesh
         view_manager.get_view().addItem(self._gl_voxel_mesh)
 
 
     def build_triangle_array(self, view_manager):
         """Build an array in the proper format for a gl mesh
-        
+
         Each x/y/z/value point creates 8 vertexes, 12 faces, and 12 face colors
-        
+
         Arguments:
             view_manager {ViewManager3D} -- the view manager
-        
+
         Returns:
             list -- vertexs, faces, and colors all as numpy ndarray
         """
@@ -169,13 +171,13 @@ class PMap(RecoBase3D):
             if faces is None:
                 faces = self._faces_template
             else:
-                faces = numpy.append(faces, 
-                                     self._faces_template + 8*i, 
+                faces = numpy.append(faces,
+                                     self._faces_template + 8*i,
                                      axis=0)
             if verts is None:
                 verts = this_verts
             else:
-                verts = numpy.append(verts, 
+                verts = numpy.append(verts,
                                      this_verts, axis=0)
 
             i += 1
@@ -184,16 +186,16 @@ class PMap(RecoBase3D):
 
     def make_box(self, x, y, z):
         """Build the correct box for X/Y/Z given the meta
-        
-        Since the meta is voxelized, the X/Y/Z location needs to 
-        be mapped to the corresponding voxel.  This function makes 
+
+        Since the meta is voxelized, the X/Y/Z location needs to
+        be mapped to the corresponding voxel.  This function makes
         that mapping and builds the 8 coordinate box correspondingly
-        
+
         Arguments:
             x {float} -- x location
             y {float} -- y location
             z {float} -- z location
-        
+
         Returns:
             [type] -- [description]
         """
@@ -207,7 +209,7 @@ class PMap(RecoBase3D):
         verts_box[:,0] -= 0.5*self._meta.size_voxel_x()
         verts_box[:,1] -= 0.5*self._meta.size_voxel_y()
         verts_box[:,2] -= 0.5*self._meta.size_voxel_z()
-        
+
         #Move the points to the right coordinate in this space
         verts_box[:,0] += x
         verts_box[:,1] += y
@@ -219,16 +221,16 @@ class PMap(RecoBase3D):
 
     def get_color(self, lookupTable, levels, value ):
         """Use the lookup table and levels to interpolate a color
-        
-        Finds the value of the lookup table that is closest to the 
+
+        Finds the value of the lookup table that is closest to the
         value specified.  Colors above threshold are set to the max
         value.  Below threhold is set to (0,0,0,0)
-        
+
         Arguments:
             lookupTable {} -- [Color lookup table]
             levels {list} -- Min and max values of the table
-            value {[type]} -- Value in question 
-        
+            value {[type]} -- Value in question
+
         Returns:
             [type] -- [description]
         """
@@ -247,9 +249,9 @@ class PMap(RecoBase3D):
 
     def clear_drawn_objects(self, view_manager):
         """Override clear drawn objects
-        
+
         Remove objects from view, and delete the local cache of data
-        
+
         Arguments:
             view_manager {ViewManager3D} -- The view manager
         """
