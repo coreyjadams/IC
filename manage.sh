@@ -86,6 +86,7 @@ dependencies:
   - hypothesis==3.32.0
   - pytest-xdist==1.20.0
   - pyqtgraph==0.10.0
+  - PyQt5==5.7.1
 EOF
 
     conda env create -f ${YML_FILENAME}
