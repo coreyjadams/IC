@@ -65,12 +65,21 @@ class PMap(RecoBase3D):
         # Store a reference to the meta object:
         self._meta = meta
 
+        pmap = io.pmap()
+
+        if len(pmap.s1s) != 1:
+            print("Need exactly 1 s1 to visualize pmaps, this event has {0}".format(len(pmap.s1s)))
+            return
+
+        s1 = pmap.s1s[0]
+
+
         # Z position has to be calculated based on the difference in time between s1 ands s2
 
         # Get the data from the file
 
         # Timing of the event
-        t0 = 1e-3*io.s1().peaks[0].tpeak
+        t0 = 1e-3*s1.time_at_max_energy
 
         # Placeholders for x/y/z
         self._x = []
@@ -78,19 +87,17 @@ class PMap(RecoBase3D):
         self._z = []
         self._vals = []
 
-        i = 0
-        for i_peak in range(io.s2si().number_of_peaks):
-            for sipm in io.s2si().sipms_in_peak(i_peak):
-                wfm = io.s2si().sipm_waveform(i_peak,sipm)
+        for s2 in pmap.s2s:
+            for sipm_id in s2.sipms.ids:
+                wfm = s2.sipms.waveform(sipm_id)
                 # Fill the variables as needed:
-                for t, e in zip(wfm.t, wfm.E):
+                for t, e in zip(s2.times, wfm):
                     if e != 0:
-                        self._x.append(meta.sipm_data().X[sipm])
-                        self._y.append(meta.sipm_data().Y[sipm])
+                        self._x.append(meta.sipm_data().X[sipm_id])
+                        self._y.append(meta.sipm_data().Y[sipm_id])
                         self._z.append((1e-3*t - t0))
                         self._vals.append(e)
 
-            i += 1
 
         self._min_coords = numpy.asarray((numpy.min(self._x),
                                          numpy.min(self._y),
