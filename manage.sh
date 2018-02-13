@@ -78,14 +78,14 @@ dependencies:
 - pytables=3.4.2=np113py36_0
 - pytest=3.2.1=py36_0
 - python=3.6.2=0
+- pyopengl=3.1.1a1
 - scipy=0.19.1=np113py36_0
 - sphinx=1.6.3=py36_0
-- pyqt5==5.7.1
-- pyqtgraph=0.10.0
 - pip:
   - flaky==3.4.0
   - hypothesis==3.32.0
   - pytest-xdist==1.20.0
+  - pyqtgraph==0.10.0
 EOF
 
     conda env create -f ${YML_FILENAME}
